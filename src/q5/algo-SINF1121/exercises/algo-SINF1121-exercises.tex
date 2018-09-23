@@ -1,0 +1,103 @@
+\documentclass[fr]{../../../eplexercises}
+
+\usepackage{../../../eplcode}
+\lstset{language=Java, basicstyle=\rm\small\ttfamily, tabsize=8}
+
+\hypertitle{Algorithmique et structures de données}{5}{SINF}{1121}
+{Gilles Peiffer}
+{Pierre Schaus}
+
+% TODO split exos up once solution can display "Solution à l'exercice x.x.x'"
+
+\section{Types abstraits de données, complexité, collections \java{}; piles, files et listes liées}
+\subsection{Exercices théoriques première partie}
+\begin{enumerate}
+	\item Définissez ce qu'est un type abstrait de données
+	(TAD\footnote{\emph{abstract data type} (ADT) en anglais}).
+	En \java{}, est-il préférable de décrire un TAD
+	par une classe ou une interface?
+	Pourquoi?
+	\item Comment faire pour implémenter une \emph{pile}
+	par une liste simplement chaînée
+	où les opérations \lstinline|push| et \lstinline|pop|
+	se font en \textbf{fin de liste}?
+	Cette solution est-elle efficace? Argumentez.
+	\item Quelles sont les implémentations possibles pour une pile?
+	En consultant la documentation sur l'API de \java{},
+	décrivez l'implémentation d'une pile par la classe
+	\lstinline|java.util.Stack|.
+	Allez voir le code source
+	de l'implémentation \lstinline|java.util.Stack|
+	(\texttt{ctrl+B} depuis IntelliJ).
+
+	Pourquoi pensez-vous que les développeurs de \java{}
+	ont choisi cette implémentation
+	(hint: argumentez au niveau de la mémoire et du garbage collector)?
+\end{enumerate}
+\begin{solution}
+\begin{enumerate}
+	\item Un \emph{type abstrait de données}
+	est une spécification mathématique d'un ensemble de données
+	et de l'ensemble des opérations
+	que l'on peut effectuer sur elles.
+	Sa représentation interne est inconnue de l'utilisateur.
+
+	Il est préférable de décrire le type abstrait de données
+	par une \emph{interface}.
+	Une interface en \java{}
+	est une liste de signatures de méthodes,
+	sans implémentation.
+	L'interface specifie le contrat pour le client,
+	sans plus.
+	De cette façon,
+	l'implémentation est séparée,
+	dans une toute autre classe.
+	Un autre avantage des interfaces est
+	que plusieurs représentations
+	peuvent coexister dans un même programme.
+	Ce n'est pas aussi simple
+	lorsque l'ADT est représenté par une simple classe.
+	\item Une pile est caractérisée par son comportement LIFO.
+	Pour \lstinline|push|,
+	il faudrait d'abord itérer à travers la liste
+	pour trouver le dernier élément.
+	Ensuite, il faudrait
+	attacher le nouveau n\oe{}ud derrière la liste
+	en mettant une référence vers celui-ci
+	dans le champ \lstinline|next| du dernier n\oe{}ud actuel,
+	puis mettre le \lstinline|next|
+	du nouveau n\oe{}ud à \lstinline|null|.
+	En supposant que ces dernières opérations
+	se fassent en temps constant,
+	cette méthode serait donc en $\bigoh(n)$,
+	où $n$ est la taille de la liste,
+	car il faut itérer sur tous les n\oe{}uds de la liste.
+	Pour \lstinline|pop|,
+	on se retrouve dans un cas similaire:
+	il faut d'abord itérer jusqu'à l'avant-dernier n\oe{}ud,
+	puis récupérer les données du dernier n\oe{}ud,
+	et mettre la référence du nouveau dernier à \lstinline|null|.
+	On a encore une fois une complexité en $\bigoh(n)$.
+	Comme il est possible de faire ces opérations
+	en temps constant ($\bigoh(1)$)
+	en changeant la représentation interne de la stack,
+	ce n'est pas une implémentation efficace.
+	\item La pile est implémentée comme
+	un \lstinline|Vector| d'un type générique,
+	et a donc accès aux fonctions de la classe \lstinline|Vector|.
+	La classe \lstinline|Stack|
+	n'a que 6 méthodes:
+	\lstinline|push|, \lstinline|pop|, \lstinline|peek|,
+	\lstinline|empty| et \lstinline|search| et un constructeur vide.
+
+	Notamment pour la fonction \lstinline|pop|,
+	on utilise une fonction de \lstinline|Vector|,
+	\lstinline|removeElementAt|,
+	qui met la référence du n\oe{}ud devenu inutile
+	à \lstinline|null|,
+	de sorte à ce que le gc\footnote{Garbage collector.}
+	puisse récupérer la mémoire.
+\end{enumerate}
+\end{solution}
+
+\end{document}
