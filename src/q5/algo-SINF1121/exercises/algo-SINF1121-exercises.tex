@@ -5,118 +5,23 @@
 \usepackage{float}
 \lstset{language=Java, basicstyle=\rm\small\ttfamily, tabsize=8}
 
-\hypertitle{Algorithmique et structures de données}{5}{SINF}{1121}
+\hypertitle[']{Algorithmique et structures de données}{5}{SINF}{1121}
 {Gilles Peiffer}
 {Pierre Schaus}
 
 % TODO split exos up once solution can display "Solution à l'exercice x.x.x'"
 
-\section{Types abstraits de données, complexité, collections \java{}; piles, files et listes liées}
-\subsection{Exercices théoriques première partie}
-\begin{enumerate}
-	\item Définissez ce qu'est un type abstrait de données
-	(\textsc{TAD}\footnote{\emph{Abstract data type} (\textsc{ADT}) en anglais}).
-	En \java{}, est-il préférable de décrire un TAD
-	par une classe ou une interface?
-	Pourquoi?
-	\item Comment faire pour implémenter une \emph{pile}
-	par une liste simplement chaînée
-	où les opérations \lstinline|push| et \lstinline|pop|
-	se font en \textbf{fin de liste}?
-	Cette solution est-elle efficace? Argumentez.
-	\item Quelles sont les implémentations possibles pour une pile?
-	En consultant la documentation sur l'\textsc{API} de \java{},
-	décrivez l'implémentation d'une pile par la classe
-	\lstinline|java.util.Stack|.
-	Allez voir le code source
-	de l'implémentation \lstinline|java.util.Stack|
-	(\texttt{ctrl+B} depuis IntelliJ).
+\part{Types abstraits de données, complexité, collections \java{}; piles, files et listes liées}
+\section{Exercices théoriques première partie}
+\subsection*{Question 1.1.1}
+Définissez ce qu'est un type abstrait de données
+(\textsc{TAD}\footnote{\emph{Abstract data type} (\textsc{ADT}) en anglais}).
+En \java{}, est-il préférable de décrire un TAD
+par une classe ou une interface?
+Pourquoi?
 
-	Pourquoi pensez-vous que les développeurs de \java{}
-	ont choisi cette implémentation
-	(hint: argumentez au niveau de la mémoire et du garbage collector)?
-	\item Comment faire pour implémenter
-	le type abstrait de données \lstinline|Pile|
-	à l'aide de deux \emph{files}?
-	Décrivez en particulier le fonctionnement
-	des méthodes \lstinline|push| et \lstinline|pop| dans ce cas.
-
-	À titre d'exemple, précisez l'état de chacune des deux files
-	après avoir empilé les entiers \lstinline|1 2 3|
-	à partir d’une pile initialement vide.
-	Décrivez ce qu’il se passe ensuite
-	lorsque l’on effectue l’opération \lstinline|pop|.
-
-	Quelle est la complexité temporelle de ces méthodes
-	si l’on suppose
-	que chaque opération \lstinline|enqueue| et \lstinline|dequeue|
-	s’exécute en temps constant?
-
-	Cette implémentation d’une pile est-elle efficace
-	(pour $n$ opérations)
-	par rapport aux autres implémentations
-	présentées dans le livre de référence?
-	\item
-	\begin{itemize}
-		\item Qu'est-ce qu'un itérateur en \java{}
-		(\lstinline|java.util.Iterator|)?
-		\item Pourquoi est-ce util de définir une méthode
-		\lstinline|iterator()| sur les structures de données?
-		\item Que pensez-vous de permettre
-		la modification d'une structure de données
-		alors qu'on est en train d'itérer sur celle-ci?
-	\end{itemize}
-
-	Pour vous aider dans la réflexion,
-	nous vous invitons à lire la spécification de l'\textsc{API} \java{}
-	concernant la méthode \lstinline|remove()|.
-
-	Proposez une modification
-	du code de l’iterateur de \lstinline|Stack|
-	qui lance une erreur de type % had to add text so it breaks the line
-	\lstinline|java.util.ConcurrentModificationException|
-	si le client modifie la collection
-	avec un \lstinline|push()| ou \lstinline|pop()| durant l’itération.
-	Est-ce une bonne idée de laisser
-	l’implémentation de la méthode \lstinline|remove()| vide
-	si on ne désire pas permettre cette fonctionnalité?
-	\item La notation $\sim$ (tilde) est utilisée
-	dans le livre de référence
-	pour l'analyse des temps de calcul des algorithmes.
-	En quoi cette notation diffère ou ressemble
-	aux notations plus classiquement utilisées
-	$\bigoh$ (big Oh), $\bigomega$ (big Omega) et $\bigtheta$ (big Theta)?
-
-	Expliquez précisément les liens et similitudes entre celles-ci.
-	Que voyez-vous comme avantage à utiliser la notation $\sim$ (tilde)
-	plutôt que $\bigoh$ lorsque c'est possible?
-	\item Expliquez comment nous pouvons
-	extraire la caractérisation $\sim$ (tilde)
-	de l'implémentation d'un algorithme
-	à l'aide du test \emph{Doubling ratio}.
-	\begin{itemize}
-		\item Comment fonctionne ce test?
-		\item Quelles sont les limites et avantages de ce test?
-	\end{itemize}
-	Supposons que nous mesurons les temps d'éxécution $T(n)$ suivants
-	(en secondes) d'un programme en fonction de la taille de l'entrée $n$:
-	\[
-	\begin{array}{cccccccc}
-		\hline
-		n & 1000 & 2000 & 4000 & 8000 & \num{16000} & \num{32000} & \num{64000} \\
-		T(n) & 0 & 0 & 0.1 & 0.3 & 1.3 & 5.1 & 20.5 \\
-		\hline
-	\end{array}
-	\]
-	\begin{itemize}
-		\item Comment pouvez-vous caractériser au mieux
-		l'ordre de croissance de cette fonction?
-		\item Que serait le temps d'exécution pour $\num{128000}$?
-	\end{itemize}
-\end{enumerate}
 \begin{solution}
-\begin{enumerate}
-	\item Un \emph{type abstrait de données}
+	Un \emph{type abstrait de données}
 	est une spécification mathématique d'un ensemble de données
 	et de l'ensemble des opérations
 	que l'on peut effectuer sur elles.
@@ -140,7 +45,17 @@
 	peuvent coexister dans un même programme.
 	Ce n'est pas aussi simple
 	lorsque l'\textsc{ADT} est représenté par une simple classe.
-	\item Une pile est caractérisée par son comportement \textsc{LIFO}.
+\end{solution}
+
+\subsection*{Question 1.1.2}
+Comment faire pour implémenter une \emph{pile}
+par une liste simplement chaînée
+où les opérations \lstinline|push| et \lstinline|pop|
+se font en \textbf{fin de liste}?
+Cette solution est-elle efficace? Argumentez.
+
+\begin{solution}
+	Une pile est caractérisée par son comportement \textsc{LIFO}.
 	Pour \lstinline|push|,
 	il faudrait d'abord itérer à travers la liste
 	pour trouver le dernier élément.
@@ -165,7 +80,23 @@
 	en temps constant ($\bigoh(1)$)
 	en changeant la représentation interne de la stack,
 	ce n'est pas une implémentation efficace.
-	\item Il y a deux grandes manières d'implémenter une pile:
+\end{solution}
+
+\subsection*{Question 1.1.3}
+Quelles sont les implémentations possibles pour une pile?
+En consultant la documentation sur l'\textsc{API} de \java{},
+décrivez l'implémentation d'une pile par la classe
+\lstinline|java.util.Stack|.
+Allez voir le code source
+de l'implémentation \lstinline|java.util.Stack|
+(\texttt{ctrl+B} depuis IntelliJ).
+
+Pourquoi pensez-vous que les développeurs de \java{}
+ont choisi cette implémentation
+(hint: argumentez au niveau de la mémoire et du garbage collector)?
+
+\begin{solution}
+	Il y a deux grandes manières d'implémenter une pile:
 	avec des tableaux ou avec des listes chaînées.
 	La pile est implémentée comme
 	un \lstinline|Vector| d'un type générique,
@@ -207,8 +138,60 @@
 	Quand on utilise une liste chaînée,
 	les cas où on \lstinline|push| beaucoup
 	font appel au \textsc{GC} trop souvent.
-	\item
-	\item Un itérateur sert à passer à travers
+\end{solution}
+
+\subsection*{Question 1.1.4}
+Comment faire pour implémenter
+le type abstrait de données \lstinline|Pile|
+à l'aide de deux \emph{files}?
+Décrivez en particulier le fonctionnement
+des méthodes \lstinline|push| et \lstinline|pop| dans ce cas.
+
+À titre d'exemple, précisez l'état de chacune des deux files
+après avoir empilé les entiers \lstinline|1 2 3|
+à partir d’une pile initialement vide.
+Décrivez ce qu’il se passe ensuite
+lorsque l’on effectue l’opération \lstinline|pop|.
+
+Quelle est la complexité temporelle de ces méthodes
+si l’on suppose
+que chaque opération \lstinline|enqueue| et \lstinline|dequeue|
+s’exécute en temps constant?
+
+Cette implémentation d’une pile est-elle efficace
+(pour $n$ opérations)
+par rapport aux autres implémentations
+présentées dans le livre de référence?
+
+\nosolution
+
+\subsection*{Question 1.1.5}
+\begin{itemize}
+	\item Qu'est-ce qu'un itérateur en \java{}
+	(\lstinline|java.util.Iterator|)?
+	\item Pourquoi est-ce util de définir une méthode
+	\lstinline|iterator()| sur les structures de données?
+	\item Que pensez-vous de permettre
+	la modification d'une structure de données
+	alors qu'on est en train d'itérer sur celle-ci?
+\end{itemize}
+
+Pour vous aider dans la réflexion,
+nous vous invitons à lire la spécification de l'\textsc{API} \java{}
+concernant la méthode \lstinline|remove()|.
+
+Proposez une modification
+du code de l’iterateur de \lstinline|Stack|
+qui lance une erreur de type % had to add text so it breaks the line
+\lstinline|java.util.ConcurrentModificationException|
+si le client modifie la collection
+avec un \lstinline|push()| ou \lstinline|pop()| durant l’itération.
+Est-ce une bonne idée de laisser
+l’implémentation de la méthode \lstinline|remove()| vide
+si on ne désire pas permettre cette fonctionnalité?
+
+\begin{solution}
+	Un itérateur sert à passer à travers
 	tous les éléments d'une collection.
 	Il vaut mieux utiliser un itérateur que d'utiliser \lstinline|get()|
 	car l'itérateur est plus intelligent
@@ -220,7 +203,22 @@
 	On peut utiliser un compteur de \lstinline|push| et \lstinline|pop|
 	pour voir si on a touché à la structure
 	pendant que l'itérateur était dessus.
-	\item Ces notations sont similaires dans le sens où
+\end{solution}
+
+\subsection*{Question 1.1.6}
+La notation $\sim$ (tilde) est utilisée
+dans le livre de référence
+pour l'analyse des temps de calcul des algorithmes.
+En quoi cette notation diffère ou ressemble
+aux notations plus classiquement utilisées
+$\bigoh$ (big Oh), $\bigomega$ (big Omega) et $\bigtheta$ (big Theta)?
+
+Expliquez précisément les liens et similitudes entre celles-ci.
+Que voyez-vous comme avantage à utiliser la notation $\sim$ (tilde)
+plutôt que $\bigoh$ lorsque c'est possible?
+
+\begin{solution}
+	Ces notations sont similaires dans le sens où
 	elles représentent la complexité algorithmique asymptotique.
 	Cependant, dans le cas de la notation $\sim$
 	on inclut un facteur multiplicatif de sorte à ce que
@@ -229,7 +227,35 @@
 	\]
 	La notation $\sim$ est donc plus précise,
 	et c'est pour cela qu'elle peut être préférable à la notation $\bigoh$.
-	\item On se base sur la formule suivante:
+\end{solution}
+
+\subsection*{Question 1.1.7}
+Expliquez comment nous pouvons
+extraire la caractérisation $\sim$ (tilde)
+de l'implémentation d'un algorithme
+à l'aide du test \emph{Doubling ratio}.
+\begin{itemize}
+	\item Comment fonctionne ce test?
+	\item Quelles sont les limites et avantages de ce test?
+\end{itemize}
+Supposons que nous mesurons les temps d'éxécution $T(n)$ suivants
+(en secondes) d'un programme en fonction de la taille de l'entrée $n$:
+\[
+\begin{array}{cccccccc}
+	\hline
+	n & 1000 & 2000 & 4000 & 8000 & \num{16000} & \num{32000} & \num{64000} \\
+	T(n) & 0 & 0 & 0.1 & 0.3 & 1.3 & 5.1 & 20.5 \\
+	\hline
+\end{array}
+\]
+\begin{itemize}
+	\item Comment pouvez-vous caractériser au mieux
+	l'ordre de croissance de cette fonction?
+	\item Que serait le temps d'exécution pour $\num{128000}$?
+\end{itemize}
+
+\begin{solution}
+	On se base sur la formule suivante:
 	\[
 	T(N) \sim a N^b \log N \iff T(2N) \sim a (2N)^b \log(2N)
 	\]
@@ -253,39 +279,18 @@
 	En multipliant le temps pour $\num{64000}$ par $4$,
 	on peut prédire que le temps d'exécution
 	sera d'environ $\SI{82}{\second}$ pour $n = \num{128000}$.
-\end{enumerate}
 \end{solution}
 
-\subsection{Exercices théoriques supplémentaires}
-\begin{enumerate}
-	\item Que signifient les paramètres \lstinline|-Xmx|, \lstinline|-Xms|
-	que l'on peut passer à la \textsc{JVM} pour l'exécution d'un bytecode?
-	Est-ce que ces paramètres peuvent influencer
-	la vitesse d'exécution d'un programme \java{}? Pourquoi?
-	\item \leavevmode
-	\begin{itemize}
-		\item Qu’est-ce qu’un bon ensemble de tests unitaires
-		pour vérifier l’exactitude d’une structure de données?
-		\item Pensez-vous aux cas limites?
-		\item Pensez-vous à
-		la valeur maximale des entiers, doubles, etc.?
-		\item En quoi la génération de données aléatoire
-		peut être utile pour tester les structures de données?
-		\item Pourquoi est-ce important
-		de travailler avec une semence (seed) fixée?
-		\item En quoi un outil d’analyse de couverture de code
-		peut être utile
-		(tel que \href{http://eclemma.org/jacoco/}{Jacoco})
-		pour vous aidez à concevoir des tests?
-		\item Comment vérifier expérimentalement
-		que l’implémentation d’une structure de données
-		ou un algorithme a bien
-		la complexité temporelle théorique attendue?
-	\end{itemize}
-\end{enumerate}
+\section{Exercices théoriques supplémentaires}
+
+\subsection*{Question 1.2.1}
+Que signifient les paramètres \lstinline|-Xmx|, \lstinline|-Xms|
+que l'on peut passer à la \textsc{JVM} pour l'exécution d'un bytecode?
+Est-ce que ces paramètres peuvent influencer
+la vitesse d'exécution d'un programme \java{}? Pourquoi?
+
 \begin{solution}
-\begin{enumerate}
-	\item Le paramètre \lstinline|-Xmx| est
+	Le paramètre \lstinline|-Xmx| est
 	une indication à la \textsc{JVM} de la taille maximale
 	que peut atteindre le heap au cours de l'exécution du programme.
 	Le paramètre \lstinline|-Xms| est
@@ -294,8 +299,30 @@
 	Il est possible d'améliorer la vitesse d'exécution
 	en rendant les paramètres très grands,
 	car alors le \textsc{GC} ne doit pas s'activer aussi souvent.
-	\item
-\end{enumerate}
 \end{solution}
+
+\subsection*{Question 1.2.2}
+\begin{itemize}
+	\item Qu’est-ce qu’un bon ensemble de tests unitaires
+	pour vérifier l’exactitude d’une structure de données?
+	\item Pensez-vous aux cas limites?
+	\item Pensez-vous à
+	la valeur maximale des entiers, doubles, etc.?
+	\item En quoi la génération de données aléatoire
+	peut être utile pour tester les structures de données?
+	\item Pourquoi est-ce important
+	de travailler avec une semence (seed) fixée?
+	\item En quoi un outil d’analyse de couverture de code
+	peut être utile
+	(tel que \href{http://eclemma.org/jacoco/}{Jacoco})
+	pour vous aider à concevoir des tests?
+	\item Comment vérifier expérimentalement
+	que l’implémentation d’une structure de données
+	ou un algorithme a bien
+	la complexité temporelle théorique attendue?
+\end{itemize}
+
+\nosolution
+
 
 \end{document}
