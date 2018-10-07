@@ -324,5 +324,93 @@ la vitesse d'exécution d'un programme \java{}? Pourquoi?
 
 \nosolution
 
+\part{Tri et propriétés des ensembles triés}
+\section{Exercices théoriques première partie}
+\subsection*{Question 2.1.1}
+Étant donné un tableau contenant $n$ entiers triés,
+et un nombre $x$ à insérer dans le tableau,
+pouvez-vous indiquer un algorithme permettant
+de trouver la position où insérer $x$
+tout en gardant le tableau trié?
 
+Quelle est la complexité de cet algorithme?
+
+\begin{solution}
+	L'algorithme par défaut pour faire ceci
+	est l'algorithme du \emph{binary search},
+	qui partitionne récursivement le tableau en deux.
+	Sa complexité est $\bigoh(\lg n)$,
+	où $n$ est la taille du tableau.
+\end{solution}
+
+\subsection*{Question 2.1.2}
+Nous considérons le problème très général où l’on a $n$ jobs
+à accomplir pour des clients
+et chaque job $j$ demande $t_j$ secondes pour l’accomplir.
+Un seul job peut être effectué à la fois.
+
+L’objectif est de terminer tous les jobs
+tout en maximisant la satisfaction des clients.
+Maximiser la satisfaction des clients revient à
+construire un planning qui minimise le temps de complétion moyen des jobs.
+
+Par exemple, si la durée des jobs est de $5, 8, 3, 4$
+et que l’on effectue les jobs dans cet ordre,
+les temps de fin seront de $5, 13, 16, 20$
+et donc le temps de fin moyen sera de $\frac{5+13+16+20}{4} = 13.5$.
+Prouvez (avec une preuve écrite!) que trier les $n$ jobs
+dans l’ordre croissant des $t_j$ génère une solution optimale au problème.
+
+\begin{solution}
+	\begin{proof}
+	On voit que le temps total $t$ est égal à
+	\begin{align*}
+	t &= \frac{t_1 + (t_1 + t_2) + \cdots + (t_1 + t_2 + \cdots + t_n)}{n}\\
+	&= t_1 + \frac{n-1}{n} t_2 + \frac{n-2}{n} + \cdots + \frac{1}{n} t_n\\
+	&= \sum_{i=1}^{n} \frac{n-i+1}{n} t_i\,.
+	\end{align*}
+	On voit immédiatement que si on veut minimiser cette somme,
+	il faut que
+	\[
+	t_1 \le t_2 \le t_3 \le \cdots \le t_n\,.
+	\]
+	\end{proof}
+\end{solution}
+
+\subsection*{Question 2.1.3}
+Qu’entend-t-on par un algorithme de tri stable et en place (\emph{in place})?
+Pour tout les algorithmes présentés dans le livre de référence,
+indiquez s’ils sont en place (ou pas) ou stables (ou pas).
+
+\begin{solution}
+	Un algorithme est stable si il conserve l'ordre d'éléments
+	dont la valeur est la même.
+	Par exemple, on pourrait s'imaginer avoir une liste
+	de nos \emph{followers} sur Twitter,
+	triée par ordre alphabétique.
+	Si on utilise un algorithme de tri stable
+	pour les trier par nombre de tweets par exemple,
+	ils seront toujours dans l'ordre alphabétique
+	pour un même nombre de tweets.
+
+	Un algorithme de tri est en place si il trie un tableau
+	sans utiliser de structure de données auxiliaire.
+	Cependant, un peu de mémoire supplémentaire est autorisée
+	pour les variables auxiliaires.
+
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{ccc}
+			algorithme & stable? & en place?\\
+			\hline
+			selection sort & non & oui\\
+			insertion sort & oui & oui\\
+			shellsort & non & oui\\
+			quicksort & non & oui\\
+			3-way quicksort & non & oui\\
+			mergesort & oui & non\\
+			heapsort & non & oui
+		\end{tabular}
+	\end{table}
+\end{solution}
 \end{document}
