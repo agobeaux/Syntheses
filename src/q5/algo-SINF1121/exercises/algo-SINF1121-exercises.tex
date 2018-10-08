@@ -339,7 +339,16 @@ Quelle est la complexité de cet algorithme?
 	L'algorithme par défaut pour faire ceci
 	est l'algorithme du \emph{binary search},
 	qui partitionne récursivement le tableau en deux.
-	Sa complexité est $\bigoh(\lg n)$,
+	L'équation de récurrence que l'on résout est
+	\[
+	\left\{
+	\begin{array}{rcl}
+		f(n) & = & 1 + f\left(\frac{n}{2}\right)\,,\\
+		f(0) & = & 1\,.
+	\end{array}
+	\right.
+	\]
+	Sa complexité est donc $\bigoh(\lg n)$,
 	où $n$ est la taille du tableau.
 \end{solution}
 
@@ -369,8 +378,12 @@ dans l’ordre croissant des $t_j$ génère une solution optimale au problème.
 	&= t_1 + \frac{n-1}{n} t_2 + \frac{n-2}{n} + \cdots + \frac{1}{n} t_n\\
 	&= \sum_{i=1}^{n} \frac{n-i+1}{n} t_i\,.
 	\end{align*}
-	On voit immédiatement que si on veut minimiser cette somme,
-	il faut que
+	Par l'absurde.
+	Soit une suite de jobs optimale telle que $t_a > t_b$.
+	On voit que $2t_a + t_b > 2t_b + t_a$,
+	et que donc si on ne trie pas les éléments,
+	on aura un temps suroptimal\footnote{Enfin, suroptimal en fait\dots}.
+	Il faut donc que
 	\[
 	t_1 \le t_2 \le t_3 \le \cdots \le t_n\,.
 	\]
@@ -444,6 +457,7 @@ Quelle est la complexité de votre algorithme?
 \begin{solution}
 	On peut utiliser l'algorithme de mergesort,
 	qui garde sa complexité en $\bigtheta(n \log n)$ dans le pire cas.
+	On peut également utiliser l'algorithme de quicksort.
 \end{solution}
 
 \subsection*{Question 2.1.6}
@@ -469,6 +483,8 @@ d’un algorithme de tri bien connu qui s’exécute en $\bigoh(n \log n)$?
 	On peut utiliser une version légèrement modifiée de mergesort,
 	où on détecte les inversions lors de l'opération de merge.
 	Sa complexité est evidemment en $\bigtheta(n \log n)$.
+	Comme on le fait récursivement,
+	on va ainsi compter toutes les inversions.
 	%TODO pseudocode : https://stackoverflow.com/questions/26702051/find-the-number-of-unordered-pair-in-an-array
 \end{solution}
 
@@ -486,7 +502,18 @@ Expliquez comment vous implémenteriez un \lstinline|Comparator| efficace
 pour des \lstinline|String|.
 
 \begin{solution}
+	Il faut que \lstinline|class Person implements Comparable<Person>|.
+	On doit alors implémenter une fonction \lstinline|compareTo()|,
+	qui est la fonction que \java{} appelle
+	lorsqu'il essaie de trier des objets.
+	L'algorithme de tri va utiliser
+	la fonction \lstinline|compareTo()| propre
+	au type d'objet qu'il essaie de trier.
 
+	Comme en \java{}, il est impossible de faire
+	\lstinline|class Student extends Person implements Comparable<Student>|,
+	on utilise un \lstinline|Comparator|:
+	\lstinline|class Person implements Comparator<Person>|.
 \end{solution}
 
 \subsection*{Question 2.1.8}
@@ -495,7 +522,9 @@ au départ d’un algorithme de tri non stable?
 Comment?
 
 \begin{solution}
-
+	Oui; il suffit de soit trier d'abord sur un élément de l'objet
+	puis sur un indice qu'on lui avait donné dans l'ordre initial,
+	soit d'utiliser un dictionnaire\footnote{Plus tard dans le cours.}.
 \end{solution}
 
 \subsection*{Question 2.1.9}
