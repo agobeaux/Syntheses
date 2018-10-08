@@ -3,6 +3,9 @@
 \usepackage{../../../eplcode}
 \usepackage{../../../eplunits}
 \usepackage{float}
+\usepackage[french,ruled,vlined]{algorithm2e}
+\SetKw{KwBy}{by}
+
 \lstset{language=Java, basicstyle=\rm\small\ttfamily, tabsize=8}
 
 \hypertitle[']{Algorithmique et structures de données}{5}{SINF}{1121}
@@ -382,7 +385,7 @@ dans l’ordre croissant des $t_j$ génère une solution optimale au problème.
 	Soit une suite de jobs optimale telle que $t_a > t_b$.
 	On voit que $2t_a + t_b > 2t_b + t_a$,
 	et que donc si on ne trie pas les éléments,
-	on aura un temps suroptimal\footnote{Enfin, suroptimal en fait\dots}.
+	on aura un temps suboptimal\footnote{Enfin, suroptimal en fait\dots}.
 	Il faut donc que
 	\[
 	t_1 \le t_2 \le t_3 \le \cdots \le t_n\,.
@@ -442,11 +445,38 @@ les éléments consécutifs d’un tableau,
 et à les permuter lorsqu’ils sont mal triés.
 Cette opération est répétée jusqu’à ce que la liste soit triée.
 Cet algorithme peut éventuellement vous inspirer.
-\medskip
 
-Écrivez le pseudo code de votre algorithme et donnez-en la complexité.
+\medskip
+Écrivez le pseudocode de votre algorithme et donnez-en la complexité.
 
 \begin{solution}
+	Appelons la fonction de comparaison \lstinline|compareTo()|,
+	avec la fonction \lstinline|toLast()|
+	pour mettre la première carte à la fin
+	et une fonction \lstinline|swap()|
+	qui échange deux cartes (en l'occurrence, les deux premières).
+	\begin{algorithm}[H]
+	\DontPrintSemicolon
+	\KwData{Un ensemble de $n$ cartes $\mathcal{C}$ sous forme de tableau.}
+	\KwResult{Le même ensemble de cartes,
+	trié dans l'ordre croissant selon la fonction de comparaison.}
+	\Begin{
+		\For{$os \gets 0$ \KwTo $n-1$ \KwBy $1$}{
+			\For{$i \gets 0$ \KwTo $n - os - 1$ \KwBy $1$}{
+				\If{$\mathcal{C}[0].\textnormal{compareTo}(\mathcal{C}[1]) > 0$)}{
+					swap($\mathcal{C}[0]$, $\mathcal{C}[1]$)\;
+				}
+				toLast()\;
+			}
+			\For{$j \gets 0$ \KwTo $os - 1$ \KwBy $1$}{
+				toLast()\;
+			}
+		}
+	}
+	\caption{Variante de bubble sort\label{algo:cardsort}}
+\end{algorithm}
+Cet algorithme\footnote{Baptisé \emph{cardsort} par l'auteur\dots}
+a une complexité en $\bigoh(n^2)$.
 \end{solution}
 
 \subsection*{Question 2.1.5}
@@ -471,9 +501,13 @@ Justifiez la complexité de votre algorithme et donnez son pseudocode.
 soit $A.B$ le tableau résultat de la concaténation de $A$ et $B$.
 Soit $\mathrm{nUnsorted}(A)$ le nombre de paires désordonnées
 dans un tableau $A$.
+
 Nous avons la propriété suivante que vous pouvez prouvez:
-$\mathrm{nUnsorted}(A.B) = \mathrm{nUnsorted}(A) + \mathrm{nUnsorted}(B)
-+ \abs{\{(i,j) \colon A[i] > B[j]\}}$
+\[
+\mathrm{nUnsorted}(A.B) = \mathrm{nUnsorted}(A) + \mathrm{nUnsorted}(B)
++ \abs{\{(i,j) \colon A[i] > B[j]\}}\,.
+\]
+
 Quelle est la complexité pour calculer $\abs{\{(i,j) \colon A[i] > B[j]\}}$?
 Est-ce que cette complexité peut être améliorée si $A$ et $B$ sont triés?
 Ne pouvez-vous pas calculer $\mathrm{nUnsorted}$ sur base d’une variante
@@ -485,7 +519,59 @@ d’un algorithme de tri bien connu qui s’exécute en $\bigoh(n \log n)$?
 	Sa complexité est evidemment en $\bigtheta(n \log n)$.
 	Comme on le fait récursivement,
 	on va ainsi compter toutes les inversions.
-	%TODO pseudocode : https://stackoverflow.com/questions/26702051/find-the-number-of-unordered-pair-in-an-array
+
+	\begin{algorithm}[H]
+		\DontPrintSemicolon
+		\KwData{Un tableau $l$ de $n$ nombres.}
+		\KwResult{Le nombre de paires de nombres
+		dans le mauvais ordre dans le tableau,
+		ainsi que le tableau trié.}
+		\Begin{
+			\eIf{$\mathrm{len}(l) \le 1$}{
+				\Return $(0, l)$\;
+			}{
+				mid $\gets$ $\mathrm{len}(l) / 2$\;
+				cleft, $A$ $\gets$ mergesort($l$[0:mid])\;
+				cright, $B$ $\gets$ mergesort($l$[mid:])\;
+				cmerge, merged $\gets$ merge($A$, $B$)\;
+				total $\gets$ cleft $+$ cright $+$ cmerge\;
+				\Return total, merged\;
+			}
+		}
+	\caption{Mergesort\label{algo:mergesort_inv}}
+	\end{algorithm}
+	\bigskip
+
+	\begin{algorithm}[H]
+		\DontPrintSemicolon
+		\KwData{Deux parties d'un tableau, $A$ et $B$.}
+		\KwResult{Le nombre de paires de nombres
+		dans le mauvais ordre dans le tableau,
+		ainsi que le tableau trié.}
+		\Begin{
+			li, ri $\gets$ 0, 0\;
+			merged $\gets$ []\;
+			count $\gets$ 0\;
+			\While{li $< \mathrm{len}$($A$) and ri $< \mathrm{len}$($B$)}{
+				\eIf{$A$[li] $< B$[ri]}{
+					merged.append($A$[li])\;
+					li $\gets$ li $+$ 1\;
+				}{
+					count $\gets$ count $+$ 1\;
+					merged.append($B$[ri])\;
+					ri $\gets$ ri $+$ 1\;
+				}
+			}
+			\If{li $< \mathrm{len}$($A$)}{
+				merged.extend($A$[li:])\;
+			}
+			\ElseIf{ri $< \mathrm{len}$($B$)}{
+				merged.extend($B$[ri:])\;
+			}
+			\Return count, merged\;
+		}
+	\caption{Merge\label{algo:merge_inv}}
+	\end{algorithm}
 \end{solution}
 
 \subsection*{Question 2.1.7}
@@ -533,7 +619,14 @@ dans un tableau d’un million de \lstinline|int|?
 Quelle est la complexité de votre algorithme?
 
 \begin{solution}
-
+	On tient trois variables,
+	et à chaque élément du tableau,
+	on regarde si il fait partie des trois plus petits jusque là,
+	et si oui, on le met dans sa position (1, 2 ou 3)
+	et on réarrange les autres 2.
+	Cet algorithme parcourt une fois la liste,
+	et fait des opérations à temps constant.
+	Il est donc $\bigoh(n)$.
 \end{solution}
 
 \subsection*{Question 2.1.10}
@@ -547,7 +640,12 @@ après l’opération de partitionnement autour d’une valeur $v$
 dans l’algorithme \emph{quicksort}?
 
 \begin{solution}
-
+	On utilise l'algorithme quicksort,
+	en prenant un pivot et en ne s'occupant que
+	de la partie du tableau contenant la valeur médiane
+	(c'est possible car pour quicksort,
+	le pivot se retrouve toujours à sa place finale après un pivotement).
+	L'algorithme est donc en $\bigoh(n \log n)$.
 \end{solution}
 
 \subsection*{Question 2.1.11}
@@ -560,7 +658,17 @@ sur un tableau de \num{10000000} entrées composé de \lstinline|int|
 et le même tableau avec des \lstinline|Integer|.
 
 \begin{solution}
+	L'\emph{autoboxing} est la conversion automatique que fait
+	le compilateur \java{} entre les types primitifs
+	et leurs classes Wrapper.
 
+	L'\emph{unboxing} est la conversion inverse,
+	c'est-à-dire celle que fait le compilateur \java{} entre
+	les classes Wrapper et leurs types primitifs associés.
+
+	Ces opérations prennent pas mal de temps,
+	et il est donc conseillé
+	d'utiliser le plus possible les types primitifs.
 \end{solution}
 
 \subsection*{Question 2.1.12}
@@ -573,4 +681,18 @@ Un bon profiler gratuit est \href{https://visualvm.github.io}{VirtualVM}.
 
 Utilisez \href{https://visualvm.github.io}{VirtualVM} sur votre code
 pour la question~\ref{q:int_vs_integer}.
+
+\begin{solution}
+	Un \emph{profiler} de code est un logiciel qui permet
+	de connaître le comportement d'un autre logiciel à l'exécution.
+	Il permet de contrôler:
+	\begin{itemize}
+		\item la liste des fonctions appelées
+		et le temps passé dans chacune d'elles;
+		\item l'utilisation processeur;
+		\item l'utilisation mémoire.
+	\end{itemize}
+	Il permet donc aussi de voir là où se trouvent les problèmes
+	dans un code.
+\end{solution}
 \end{document}
