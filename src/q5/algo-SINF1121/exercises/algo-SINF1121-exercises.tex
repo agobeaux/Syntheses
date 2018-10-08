@@ -413,4 +413,135 @@ indiquez s’ils sont en place (ou pas) ou stables (ou pas).
 		\end{tabular}
 	\end{table}
 \end{solution}
+
+\subsection*{Question 2.1.4}
+Comment trieriez-vous un tas de cartes
+avec la restriction que les seules opérations permises sont:
+\begin{enumerate}
+	\item comparer les deux premières cartes;
+	\item échanger les deux premières cartes;
+	\item bouger la première carte à l’arrière du tas?
+\end{enumerate}
+
+\paragraph{Astuce} Le ``bubble sort'' est un algorithme de tri
+qui consiste à comparer de manière répétée
+les éléments consécutifs d’un tableau,
+et à les permuter lorsqu’ils sont mal triés.
+Cette opération est répétée jusqu’à ce que la liste soit triée.
+Cet algorithme peut éventuellement vous inspirer.
+\medskip
+
+Écrivez le pseudo code de votre algorithme et donnez-en la complexité.
+
+\begin{solution}
+\end{solution}
+
+\subsection*{Question 2.1.5}
+Comment trier une liste doublement chaînée
+(qui ne permet donc pas d’accéder à une position par son indice) efficacement?
+Quelle est la complexité de votre algorithme?
+
+\begin{solution}
+	On peut utiliser l'algorithme de mergesort,
+	qui garde sa complexité en $\bigtheta(n \log n)$ dans le pire cas.
+\end{solution}
+
+\subsection*{Question 2.1.6}
+Imaginez un algorithme efficace
+pour compter le nombre de paires de valeurs désordonnées.
+Par exemple dans la séquence $1,3,2,5,6,4,8$
+il y a les paires $(3,2),(5,4),(6,4)$ qui sont non ordonnées.
+Justifiez la complexité de votre algorithme et donnez son pseudocode.
+
+\paragraph{Astuce} Supposons deux tableaux $A$ et $B$,
+soit $A.B$ le tableau résultat de la concaténation de $A$ et $B$.
+Soit $\mathrm{nUnsorted}(A)$ le nombre de paires désordonnées
+dans un tableau $A$.
+Nous avons la propriété suivante que vous pouvez prouvez:
+$\mathrm{nUnsorted}(A.B) = \mathrm{nUnsorted}(A) + \mathrm{nUnsorted}(B)
++ \abs{\{(i,j) \colon A[i] > B[j]\}}$
+Quelle est la complexité pour calculer $\abs{\{(i,j) \colon A[i] > B[j]\}}$?
+Est-ce que cette complexité peut être améliorée si $A$ et $B$ sont triés?
+Ne pouvez-vous pas calculer $\mathrm{nUnsorted}$ sur base d’une variante
+d’un algorithme de tri bien connu qui s’exécute en $\bigoh(n \log n)$?
+
+\begin{solution}
+	On peut utiliser une version légèrement modifiée de mergesort,
+	où on détecte les inversions lors de l'opération de merge.
+	Sa complexité est evidemment en $\bigtheta(n \log n)$.
+	%TODO pseudocode : https://stackoverflow.com/questions/26702051/find-the-number-of-unordered-pair-in-an-array
+\end{solution}
+
+\subsection*{Question 2.1.7}
+Imaginons que nous souhaitons trier des objets \lstinline|Person|
+de manière lexicographique par leur (poids, age, taille)
+mais aussi des objets \lstinline|Student| par leur (age, note, année),
+comment faire pour ne pas dupliquer l’algorithme de tri
+spécifiquement pour ces classes?
+
+Expliquez pourquoi les notions
+de \lstinline|Comparable| et \lstinline|Comparator| de \java{}
+sont utiles pour cela?
+Expliquez comment vous implémenteriez un \lstinline|Comparator| efficace
+pour des \lstinline|String|.
+
+\begin{solution}
+
+\end{solution}
+
+\subsection*{Question 2.1.8}
+Est-il possible d’obtenir un tri stable
+au départ d’un algorithme de tri non stable?
+Comment?
+
+\begin{solution}
+
+\end{solution}
+
+\subsection*{Question 2.1.9}
+Comment feriez-vous pour obtenir la 3\ieme{} plus petite valeur
+dans un tableau d’un million de \lstinline|int|?
+Quelle est la complexité de votre algorithme?
+
+\begin{solution}
+
+\end{solution}
+
+\subsection*{Question 2.1.10}
+Comment feriez-vous pour obtenir la médiane
+d’un tableau de valeurs (donc la $\frac{n}{2}$-ième valeur)?
+Quelle est la complexité de votre algorithme?
+
+\paragraph{Astuce} Que pouvez-vous déduire
+concernant la position de la médiane
+après l’opération de partitionnement autour d’une valeur $v$
+dans l’algorithme \emph{quicksort}?
+
+\begin{solution}
+
+\end{solution}
+
+\subsection*{Question 2.1.11}
+\label{q:int_vs_integer}
+Qu’est-ce que le Autoboxing and Unboxing en \java{}?
+En quoi est-ce que cela peut impacter les performances d’un algorithme de tri?
+
+Comparer les performance de \lstinline|java.util.Sort|
+sur un tableau de \num{10000000} entrées composé de \lstinline|int|
+et le même tableau avec des \lstinline|Integer|.
+
+\begin{solution}
+
+\end{solution}
+
+\subsection*{Question 2.1.12}
+Qu’est-ce qu’un \emph{profiler} de code?
+Quelles informations fournies par un profiler
+pourriez-vous utiliser pour améliorer les performances de vos algorithmes
+et structures de données de manière générale (vitesse, mémoire, \textsc{GC})?
+
+Un bon profiler gratuit est \href{https://visualvm.github.io}{VirtualVM}.
+
+Utilisez \href{https://visualvm.github.io}{VirtualVM} sur votre code
+pour la question~\ref{q:int_vs_integer}.
 \end{document}
