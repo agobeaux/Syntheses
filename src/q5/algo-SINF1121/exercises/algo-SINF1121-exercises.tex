@@ -4,7 +4,11 @@
 \usepackage{../../../eplunits}
 \usepackage{float}
 \usepackage[french,ruled,vlined]{algorithm2e}
+
+\SetKwComment{Comment}{$\triangleright$\ }{}
 \SetKw{KwBy}{by}
+
+\graphicspath{{img/}}
 
 \lstset{language=Java, basicstyle=\rm\small\ttfamily, tabsize=8}
 
@@ -711,6 +715,36 @@ donnerait en sortie \lstinline|min=[0,5], max=[3,8]|.
 Quelle est la complexité de votre méthode?
 
 \begin{solution}
+	\begin{algorithm}[H]
+		\DontPrintSemicolon
+		\KwData{Deux tableaux d'entiers, }
+		\KwResult{Le nombre minimal d'intervalles
+		couvrant la même partie des réels.}
+		\Begin{
+			$S \gets (\texttt{min}[0],+1),(\texttt{max}[0]+1,-1),\ldots, (\texttt{min}[n-1],+1),(\texttt{max}[n-1]+1,-1),(+\infty,0)$\;
+			sort($S$)\Comment*[r]{De façon croissante en `a',
+			decroissante en `b'}
+
+			start $\gets S[0].\min$\;
+			overlap $\gets S[0].b$\Comment*[r]{Toujours $+1$}
+			union $\gets \{\}$\;
+			$i \gets 1$\;
+			\While{$i < 2n$} {
+				overlap $\gets$ overlap $+ S[i].b$\;
+				\If(\Comment*[f]{Intervalle fermé}){overlap == $0$}{
+				union.append([start..$S[i].a$])\;
+					start $\gets S[i+1].a$\Comment*[r]{Pas un problème
+					car on a un élément dummy en $2n$}
+				}
+				$i \gets i + 1$\;
+			}
+			\Return union
+		}
+	\caption{Union d'intervalles\label{algo:interval_union}}
+	\end{algorithm}
+
+	Cet algorithme est en $\bigoh(n \log n)$
+	car on doit trier le tableau $S$.
 \end{solution}
 
 \subsection*{Question 2.2.2}
@@ -725,6 +759,29 @@ par rapport à la borne inférieure
 d’un algorithme de tri (Proposition~1 pp. 280--281).
 
 \begin{solution}
+	Dans ce cas,
+	il peut être utile d'utiliser l'algorithme \emph{counting sort}.
+	Cet algorithme a une complexité en $\bigtheta(n+k)$,
+	où $n$ est la taille du tableau en entrée
+	et $k$ est l'élément le plus grand du tableau.
+	Cet algorithme s'écrit comme suit:
+	\lstinputlisting{code/CountingSort.java}
+
+	Il est possible d'adapter cet algorithme
+	dans le cas où $k$ est très grand mais où il n'y a que peu de valeurs.
+	Cet algorithme peut tourner en temps linéaire
+	malgré la proposition suivante:
+	\begin{myprop}[Proposition~1 pp. 280--281]
+		Aucun algorithme basé sur les comparaisons
+		ne peut garantir trier $N$ objets
+		en moins que $\sim N \lg N$ comparaisons.
+	\end{myprop}
+	On remarque ici qu'il ne s'agit pas
+	d'un algorithme basé sur les comparaisons.
+
+	Une autre possibilité
+	est le \emph{quicksort with 3-way partitioning}\footnote{Qui est
+	un peu plus difficile à implémenter\ldots}.
 \end{solution}
 
 \subsection*{Question 2.2.3}
@@ -736,6 +793,24 @@ d’un tableau de $n$ nombres.
 Quid si on sait que le tableau ne contient que des valeurs de $0$ à $k$?
 
 \begin{solution}
+	Une solution basée sur les algorithmes de tri
+	est de simplement appliquer un algorithme tel que \emph{quicksort}
+	pour trier les éléments du tableau,
+	puis ensuite de parcourir linéairement celui-ci
+	pour trouver lequel des éléments apparaît le plus souvent.
+	On a donc une complexité (sauf pour les cas pathologiques) en
+	$\bigoh(n \log n)$.
+	Dans le cas de quicksort, on peut gagner encore quelques opérations
+	en ne calculant pas les appels récursifs
+	ne pouvant pas livrer un nouveau meilleur mode.
+
+	Si le tableau ne contient que des valeurs de $0$ à $k$,
+	on peut alors utiliser un \emph{counting sort}
+	de sorte\footnote{Hah!} à obtenir une compléxité en $\bigoh(n+k)$.
+
+	On peut aussi noter que si on ne se limite pas aux algorithmes de tri,
+	il y a moyen de faire ce calcul en temps linéaire
+	en utilisant des tables de hachage.
 \end{solution}
 
 \subsection*{Question 2.2.4}
@@ -749,6 +824,20 @@ Quelle est la complexité de votre algorithme?
 Quid si les ensembles sont dans des tableaux déjà triés?
 
 \begin{solution}
+	En utilisant les algorithmes de tri,
+	il faut $\bigoh(n \log n)$ pour trier un des tableaux ($a$),
+	puis encore une fois $\bigoh(n \log n)$
+	pour parcourir le tableau non trié ($b$)
+	et de faire une recherche dichotomique
+	sur $a$ pour trouver $b=x-a$.
+
+	Si les tableaux sont déjà triés auparavant,
+	on peut mettre des bornes plus fortes
+	pour l'algorithme de binary search,
+	mais on garde la même complexité.
+
+	Notons que ce problème est une forme du problème 2SUM,
+	pour lequel on a des algorithmes spécialisés tournant en $\bigoh(n)$.
 \end{solution}
 
 \subsection*{Question 2.2.5}
@@ -756,6 +845,7 @@ Même question que la précédente mais pour un seul ensemble.
 Quid si l’ensemble est dans un tableau déjà trié?
 
 \begin{solution}
+	La réponse est la même que pour la question précédente.
 \end{solution}
 
 \subsection*{Question 2.2.6}
@@ -769,9 +859,40 @@ Quelle serait la complexité,
 est-ce que votre algorithme change?
 
 \begin{solution}
+	Il y a plusieurs solutions
+	(soit $\mathcal{A}$ de taille $n$ et $\mathcal{B}$ de taille $m$):
+	\begin{enumerate}
+		\item \label{item1} On met tout dans un grand tableau,
+		et on trie celui-ci,
+		puis on enlève les doublons.
+		Cet algorithme prend donc $\bigoh((m+n) \log(m+n))$.
+		\item \label{item2} On trie chaque ensemble séparément,
+		puis on met tout ensemble en retirant les doublons.
+		Cet algorithme prend $\bigoh(m \log m + n \log n)$.
+		\item \label{item3} Supposons $m = n^2$.
+		Pour chaque élément du petit,
+		on fait une recherche dichotomique sur le grand
+		pour savoir s'il faut rajouter cet élément dans l'union.
+		Cette étape prend $\bigoh(2n \log n)$ et on a donc
+		$\bigoh(n^2 + 2n \log n)$.
+		Si on avait fait l'inverse,
+		on aurait $\bigoh(n^2 \log n + n)$,
+		ce qui est un peu moins bien.
+		\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.5\textwidth]{algo_comp.png}
+		\caption{Comparaison des algorithmes du point \ref{item3}.}
+		\label{fig:algo_comp}
+		\end{figure}
+	\end{enumerate}
+
+	Pour ce qui en est des complexités
+	des points \ref{item1} et \ref{item2},
+	elles sont égales si $m = n$.
 \end{solution}
 
 \subsection*{Question 2.2.7}
+\label{q:line_column_sorted_array}
 Étant donné une matrice de nombres entiers
 qui sont triés le long des lignes et des colonnes,
 comment trouver un nombre donné dans la matrice de manière efficace?
@@ -783,6 +904,21 @@ Quelles parties de la matrice pouvez-vous élaguer
 dans votre recherche en fonction du résultat?
 
 \begin{solution}
+	On commence dans ce coin,
+	et on regarde si le nombre donné
+	est plus grand ou plus petit que la position actuelle.
+	S'il est plus grand,
+	on descend à la ligne en-dessous,
+	et s'il est plus petit,
+	on avance d'une case vers la gauche.
+	\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{line_column_sorted_array.png}
+	\caption{Réponse à la Question~2.2.7.}
+	\label{fig:line_column_sorted_array}
+	\end{figure}
+	La \figuref{line_column_sorted_array}
+	permet de visualiser cet algorithme.
 \end{solution}
 
 \end{document}
