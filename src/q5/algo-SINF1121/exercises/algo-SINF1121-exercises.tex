@@ -486,7 +486,7 @@ Quelle est la complexité de votre algorithme?
 
 \begin{solution}
 	On peut utiliser l'algorithme de mergesort,
-	qui garde sa complexité en $\bigtheta(n \log n)$ dans le pire cas.
+	qui garde sa complexité en $\bigtheta(n \lg n)$ dans le pire cas.
 	On peut également utiliser l'algorithme de quicksort.
 \end{solution}
 
@@ -511,12 +511,12 @@ Nous avons la propriété suivante que vous pouvez prouvez:
 Quelle est la complexité pour calculer $\abs{\{(i,j) \colon A[i] > B[j]\}}$?
 Est-ce que cette complexité peut être améliorée si $A$ et $B$ sont triés?
 Ne pouvez-vous pas calculer $\mathrm{nUnsorted}$ sur base d’une variante
-d’un algorithme de tri bien connu qui s’exécute en $\bigoh(n \log n)$?
+d’un algorithme de tri bien connu qui s’exécute en $\bigoh(n \lg n)$?
 
 \begin{solution}
 	On peut utiliser une version légèrement modifiée de mergesort,
 	où on détecte les inversions lors de l'opération de merge.
-	Sa complexité est evidemment en $\bigtheta(n \log n)$.
+	Sa complexité est evidemment en $\bigtheta(n \lg n)$.
 	Comme on le fait récursivement,
 	on va ainsi compter toutes les inversions.
 
@@ -695,4 +695,94 @@ pour la question~\ref{q:int_vs_integer}.
 	Il permet donc aussi de voir là où se trouvent les problèmes
 	dans un code.
 \end{solution}
+
+\section{Exercices théoriques: deuxième partie}
+\subsection*{Question 2.2.1}
+Écrivez une méthode qui prend en entrée un tableau d’intervalles
+et qui retourne l’union de ces intervalles
+comme un tableau d’intervalles disjoints.
+On considère que les intervalles d’input
+sont donnés sous la forme de deux tableaux \lstinline|int[] min, int[] max;|
+où le $i$\ieme{} intervalle
+est donné par \lstinline|(min[i],max[i])|.
+Exemple d’entrée: \lstinline|min=[5,0,1,6,2], max=[7,2,2,8,3]|
+donnerait en sortie \lstinline|min=[0,5], max=[3,8]|.
+Écrivez le pseudocode.
+Quelle est la complexité de votre méthode?
+
+\begin{solution}
+\end{solution}
+
+\subsection*{Question 2.2.2}
+Vous devez trier un grand tableau
+qui a pour propriété qu’il ne contient
+que des valeurs dans l’ensemble $\{0,1,2\}$.
+Quel algorithme de tri suggérez-vous?
+Écrivez le code.
+Quelle sera la complexité pour trier le tableau?
+Discutez cette complexité
+par rapport à la borne inférieure
+d’un algorithme de tri (Proposition~1 pp. 280--281).
+
+\begin{solution}
+\end{solution}
+
+\subsection*{Question 2.2.3}
+Le mode d’un tableau de nombres
+est le nombre qui apparait le plus fréquemment dans le tableau.
+Par exemple $(4,6,2,4,3,1)$ a le mode $4$.
+Donnez un algorithme efficace pour calculer le mode
+d’un tableau de $n$ nombres.
+Quid si on sait que le tableau ne contient que des valeurs de $0$ à $k$?
+
+\begin{solution}
+\end{solution}
+
+\subsection*{Question 2.2.4}
+Étant donné deux ensembles $\mathcal{S}_1$ et $\mathcal{S}_2$
+(chacun de taille $n$),
+et un nombre $x$.
+Décrivez un algorithme efficace pour trouver
+s’il existe une paire $(a,b)$ avec $a \in \mathcal{S}_1, b \in \mathcal{S}_2$
+telle que $a+b=x$.
+Quelle est la complexité de votre algorithme?
+Quid si les ensembles sont dans des tableaux déjà triés?
+
+\begin{solution}
+\end{solution}
+
+\subsection*{Question 2.2.5}
+Même question que la précédente mais pour un seul ensemble.
+Quid si l’ensemble est dans un tableau déjà trié?
+
+\begin{solution}
+\end{solution}
+
+\subsection*{Question 2.2.6}
+Donnez un algorithme pour calculer
+l’union de deux ensembles $\mathcal{A}$ et $\mathcal{B}$.
+Supposons dans un second temps,
+que l’ensemble $\mathcal{A}$ déjà trié
+a une taille $n$ et l’ensemble $\mathcal{B}$ également trié
+a une taille $n^2$.
+Quelle serait la complexité,
+est-ce que votre algorithme change?
+
+\begin{solution}
+\end{solution}
+
+\subsection*{Question 2.2.7}
+Étant donné une matrice de nombres entiers
+qui sont triés le long des lignes et des colonnes,
+comment trouver un nombre donné dans la matrice de manière efficace?
+Indice: il existe un algorithme en temps $\bigoh(n+m)$
+pour une matrice $n \times m$.
+Pour cela commencez dans le coin supérieur droit
+et comparez avec le nombre recherché.
+Quelles parties de la matrice pouvez-vous élaguer
+dans votre recherche en fonction du résultat?
+
+\begin{solution}
+\end{solution}
+
 \end{document}
