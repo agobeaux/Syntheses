@@ -1,0 +1,139 @@
+\documentclass[fr]{../../../eplsummary}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{syntax}
+\usepackage{calc}
+\usepackage{svg}
+\usepackage{float}
+\usepackage{subcaption}
+
+%code Oz
+\usepackage{listings}
+\usepackage{color}
+\lstset{language={Oz},morekeywords={for,do,lazy}}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{geometry}
+\geometry{hmargin=2.5cm,vmargin=1.5cm}
+\captionsetup[figure]{font=small}
+
+
+% To have a proper indent for EBNF rules
+\newlength{\myl}
+
+\newenvironment{indentgrammar}[1]
+    {\setlength{\myl}{\widthof{#1}+2em}
+    \grammarindent\the\myl
+    \begin{grammar}}
+    {\end{grammar}}
+% End EBNF indent
+
+
+\hypertitle{Computer language concepts}{6}{INGI}{1131}
+{Alexandre Gobeaux\and Gilles Peiffer\and Lily Semerikova}
+{Peter Van Roy}
+
+\section{Rappels}
+
+\subsection{Vue d'ensemble des paradigmes}
+\begin{figure}[htbp]
+  \centering
+  \includesvg[scale=0.3]{img/ParadigmsOverview.svg}
+  \caption{Vue d'ensemble des paradigmes.}
+\end{figure}
+
+\begin{figure}[H]
+     \centering
+     \begin{subfigure}{0.47\textwidth}[t]
+         \centering
+         \includesvg[width=\textwidth]{img/PortMessages.svg}
+         \caption{Port (canal de communication): figure représentative.}
+     \end{subfigure}\hfill
+     \begin{subfigure}{0.47\textwidth}[t]
+         \centering
+         \includesvg[width=\textwidth]{img/multiAgent.svg}
+         \caption{Programmation multi-agent.}
+     \end{subfigure}
+        \caption{Explications des ports et de la programmation multi-agent.}
+\end{figure}
+
+\subsection{Programmation fonctionnelle}
+En programmation fonctionnelle:
+\begin{itemize}
+  \item Il n'y a pas de \emph{variables muables};
+  les variables sont à \emph{affectation unique}.
+  \item Un programme est une fonction ($z = f(x,y)$).
+  \item Une \emph{fonction} retourne un \emph{résultat}, alors qu'une \emph{procédure} n'effectue qu'une \emph{action}, et n'a \emph{pas de résultat}.
+\end{itemize}
+
+\subsection{Structures de données}
+Une \emph{structure de données} regroupe des données.
+Un exemple de structure de données est la \emph{liste}.
+La définition d'une liste avec les règles EBNF\footnote{\emph{Extended Backus--Naur Form}.} est la suivante:
+\begin{indentgrammar}{<list>}
+<list> ::= nil
+\alt <e> '|' <list>
+\end{indentgrammar}
+Avec le sucre syntaxique, \lstinline!1|nil! devient \lstinline![1]!
+
+\begin{figure}[H]
+  \centering
+  \includesvg[scale=0.5]{img/567Tree.svg}
+  \caption{Exemple de représentation d'une liste.}
+  \label{tree}
+\end{figure}
+La figure \ref{tree} représente la liste \lstinline!L = 5|6|7|nil!. On a donc comme premier élément de la liste (head) L.1 = 5 et comme reste de la liste (tail) \lstinline!L.2 = 6|7|nil!.\\
+Une autre façon de représenter une liste est en utilisant la notation standard des enregistrements (records) : \lstinline!'|'(5 '|'(6 '|'(7 nil)))!.
+\subsection{Fonctions, conditions et récursivité}
+\subsubsection{Fonction}
+L'exemple ci-dessous est une fonction en Oz, il s'agit de la fonction F avec comme argument X. On pourrait remplacer $<$expression$>$ par X.1 si X est une liste afin de renvoyer le premier élément de X par exemple.
+\begin{lstlisting}[language=Oz]
+fun{F X}
+    <expression>
+end
+\end{lstlisting}
+
+\subsubsection{Condition}
+Ci-dessous, on observe la syntaxe d'une condition en Oz.
+\begin{lstlisting}[language=Oz]
+if <expr> then <expr>
+else <expr>
+end
+\end{lstlisting}
+
+\subsubsection{Récursivité}
+En assemblant les deux concepts précédents, on peut définir une fonction et définir la notion de récursivité. Une fonction est récursive si elle s'appelle elle-même. Ci-dessous, on observe la fonction \textit{Sum} qui fait la somme des éléments de la liste X récursivement (on note l'appel à \textit{Sum} sur la tail de la liste).
+\begin{lstlisting}[language=Oz]
+fun{Sum X}
+    if X==nil then 0
+    else X.1+{Sum X.2}
+    end
+end
+\end{lstlisting}
+On peut également parler de récursivité terminale : une fonction est récursive terminale (tail recursive) si l'appel récursif est la dernière opération. On peut donc réécrire le programme \textit{Sum} pour qu'il soit récursif terminal en utilisant un accumulateur (variable qui va accumuler le résultat au fur et à mesure de l'exécution) :
+\begin{lstlisting}[language=Oz]
+fun{SumTailRecursive X Acc}
+    if X==nil then Acc
+    else {SumTailRecursive X.2 X.1+Acc}
+    end
+end
+
+fun{Sum X}
+    {SumTailRecursive X 0}
+end
+\end{lstlisting}
+
+\subsection{Représentation en mémoire}
+\begin{figure}[H]
+    \centering
+    \includesvg[scale = 0.5]{img/ProgEnvMem.svg}
+    \caption{Représentation en mémoire d'un programme.}
+    \label{ProgEnvMem}
+\end{figure}
+Sur la figure \ref{ProgEnvMem}, on peut voir que l'environnement fait une sorte de mapping entre les \textit{identifiers} et les variables stockées dans la mémoire. Lorsque X est déclaré pour la première fois, l'environnement le map sur la variable x en mémoire, initialisée à 10000 par le code. Lorsqu'ensuite, on veut exéctuer X = 999, l'\textit{identifier} X est déjà lié à la variable x qui vaut 10000, une erreur se produit donc car $999 \neq 10000$ ! Si, à la place, on declare à nouveau X, cette fois-ci, on crée une nouvelle variable en mémoire x' qui sera initialisée à 999.
+
+\subsection{Réflexions sur la programmation fonctionnelle}
+La programmation fonctionnelle est à affectation unique, ce qui est une grosse restriction ! Pouvons-nous écrire des programmes efficaces ? Pouvons-nous faire des boucles efficacement ? La réponse est oui, il faut juste utiliser des fonctions récursives terminales. La programmation fonctionnelle est donc aussi efficace que la programmation avec variables muables donc nous n'avons pas besoin de variables muables pour faire un programme efficace.
+
+\end{document}
