@@ -24,12 +24,14 @@
 {Alexandre Gobeaux\and Gilles Peiffer\and Liliya Semerikova}
 {Peter Van Roy}
 
+\newpage % separate toc
+
 \section{Rappels}
 
 \subsection{Vue d'ensemble des paradigmes}
 \begin{figure}[htbp]
   \centering
-  \includesvg[width=0.5\textwidth]{img/ParadigmsOverview.svg}
+  \includesvg[width=0.83\textwidth]{img/ParadigmsOverview.svg}
   \caption{Vue d'ensemble des paradigmes.}
 \end{figure}
 
@@ -43,9 +45,9 @@
 \begin{subfigure}[t]{0.47\textwidth}
 \centering
 \includesvg[width=\textwidth]{img/multiAgent.svg}
-\caption{Programmation multi-agent}
+\caption{Programmation multi-agents}
 \end{subfigure}
-\caption{Explication des ports et de la programmation multi-agent.}
+\caption{Explication des ports et de la programmation multi-agents.}
 \end{figure}
 
 \subsection{Programmation fonctionnelle}
@@ -56,7 +58,7 @@ En programmation fonctionnelle:
 	\item Un programme est une fonction ($z = f(x,y)$).
 	\item Une \emph{fonction} retourne un \emph{résultat},
 	alors qu'une \emph{procédure} n'effectue qu'une \emph{action},
-	et n'a \emph{pas de résultat}.
+	et ne renvoie \emph{pas de résultat}.
 	\item Un programme qui fonctionne fonctionnera toujours.
 \end{itemize}
 
@@ -163,8 +165,9 @@ initialisée à $10000$ par le code de l'exemple.
 Lorsqu'ensuite, on veut exécuter \lstinline|X = 999|,
 l'identificateur \lstinline|X| est déjà lié à la variable $x$ qui vaut $10000$.
 Une erreur se produit donc, car $999 \ne 10000$.
-Si, à la place, on declare à nouveau \lstinline|X|, cette fois-ci,
-on crée une nouvelle variable en mémoire, $x'$, qui sera initialisée à $999$.
+Si, à la place, on déclare à nouveau \lstinline|X| avec \lstinline|declare|,
+cette fois-ci, on crée une nouvelle variable en mémoire, $x'$,
+qui sera initialisée à $999$.
 La variable $x$ est devenue inaccessible.
 
 \subsection{Réflexions sur la programmation fonctionnelle}
