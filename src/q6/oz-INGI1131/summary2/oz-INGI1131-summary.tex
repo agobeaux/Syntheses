@@ -1,0 +1,183 @@
+\documentclass[fr]{../../../eplsummary}
+
+\usepackage{../../../eplcode}
+\usepackage{syntax}
+\usepackage{calc}
+\usepackage{svg}
+\usepackage{float}
+
+%code Oz
+\usepackage{color}
+\lstset{language={Oz},morekeywords={for,do,lazy}}
+
+% To have a proper indent for EBNF rules
+\newlength{\myl}
+
+\newenvironment{indentgrammar}[1]
+    {\setlength{\myl}{\widthof{#1}+2em}
+    \grammarindent\the\myl
+    \begin{grammar}}
+    {\end{grammar}}
+% End EBNF indent
+
+\hypertitle{Computer language concepts}{6}{INGI}{1131}
+{Alexandre Gobeaux\and Gilles Peiffer\and Liliya Semerikova}
+{Peter Van Roy}
+
+\newpage % separate toc
+
+\section{Rappels}
+
+\subsection{Vue d'ensemble des paradigmes}
+\begin{figure}[htbp]
+  \centering
+  \includesvg[width=0.83\textwidth]{img/ParadigmsOverview.svg}
+  \caption{Vue d'ensemble des paradigmes.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.47\textwidth}
+\centering
+\includesvg[width=\textwidth]{img/PortMessages.svg}
+\caption{Figure représentative d'un \emph{port} (canal de communication).}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.47\textwidth}
+\centering
+\includesvg[width=\textwidth]{img/multiAgent.svg}
+\caption{Programmation multi-agents}
+\end{subfigure}
+\caption{Explication des ports et de la programmation multi-agents.}
+\end{figure}
+
+\subsection{Programmation fonctionnelle}
+En programmation fonctionnelle:
+\begin{itemize}
+	\item Il n'y a pas de \emph{variables muables};
+	les variables sont à \emph{affectation unique}.
+	\item Un programme est une fonction ($z = f(x,y)$).
+	\item Une \emph{fonction} retourne un \emph{résultat},
+	alors qu'une \emph{procédure} n'effectue qu'une \emph{action},
+	et ne renvoie \emph{pas de résultat}.
+	\item Un programme qui fonctionne fonctionnera toujours.
+\end{itemize}
+
+\subsection{Structures de données}
+Une \emph{structure de données} regroupe des données.
+Un exemple de structure de données est la \emph{liste}.
+La définition d'une liste
+avec les règles EBNF\footnote{\emph{Extended Backus--Naur Form}.}
+est la suivante:
+\begin{indentgrammar}{<list>}
+<list> ::= nil
+\alt <e> '|' <list>
+\end{indentgrammar}
+On note que \synt{<list>} est une expression non terminale,
+et est définie en fonction d'elle-même (récursivement).
+Avec le sucre syntaxique, \lstinline!1|nil! peut s'écrire aussi \lstinline![1]!.
+
+\begin{figure}[H]
+\centering
+\includesvg[scale=0.5]{img/567Tree.svg}
+\caption{Exemple de représentation d'une liste.}
+\label{fig:tree}
+\end{figure}
+La \figuref{tree} représente la liste \lstinline!L = 5|6|7|nil!.
+On a donc comme premier élément de la liste (\emph{head}) \lstinline|L.1 = 5|
+et comme reste de la liste (\emph{tail}) \lstinline!L.2 = 6|7|nil!.
+Une autre façon de représenter une liste
+est en utilisant la notation standard des \emph{enregistrements (records)}:
+\lstinline!L = '|'(5 '|'(6 '|'(7 nil)))!.
+Avec le sucre syntaxique,
+cette liste deviendrait simplement \lstinline|L = [5 6 7]|.
+
+\subsection{Fonctions, conditions et récursivité}
+\subsubsection{Fonction}
+L'exemple ci-dessous est une fonction en \oz;
+il s'agit de la fonction \lstinline!F! avec comme argument \lstinline!X!.
+On pourrait remplacer \lstinline!<expression>! par \lstinline!X.1!
+si \lstinline!X! est une liste afin de renvoyer
+le premier élément de \lstinline!X! par exemple.
+\begin{lstlisting}
+fun {F X}
+	<expression>
+end
+\end{lstlisting}
+
+\subsubsection{Condition}
+Ci-dessous, on observe la syntaxe d'une \emph{condition} en \oz.
+\begin{lstlisting}
+if <expr> then <expr>
+else <expr>
+end
+\end{lstlisting}
+
+\subsubsection{Récursivité}
+En assemblant les deux concepts précédents,
+on peut définir une fonction et définir la notion de \emph{récursivité}.
+Une fonction est \emph{récursive} si elle s'appelle elle-même.
+Ci-dessous, on observe la fonction \lstinline|Sum|
+qui fait la somme des éléments de la liste \lstinline|X| récursivement
+(on note l'appel à \lstinline|Sum| sur la tail de la liste).
+\begin{lstlisting}
+fun {Sum X}
+	if X == nil then 0
+	else X.1 + {Sum X.2}
+	end
+end
+\end{lstlisting}
+On remarque la correspondance entre le concept de règle de grammaire récursive
+et celui de fonction récursive.
+
+On peut également parler de \emph{récursivité terminale}:
+une fonction est \emph{récursive terminale (tail recursive)}
+si l'appel récursif est la dernière opération.
+On peut donc réécrire le programme \lstinline|Sum|
+pour qu'il soit récursif terminal en utilisant un \emph{accumulateur}
+(identificateur qui va accumuler le résultat au fur et à mesure de l'exécution):
+\begin{lstlisting}
+fun {SumTailRecursive X Acc}
+	if X == nil then Acc
+	else {SumTailRecursive X.2 X.1+Acc}
+	end
+end
+
+fun {Sum X}
+	{SumTailRecursive X 0}
+end
+\end{lstlisting}
+Ce programme sera plus efficace, car il ne doit pas stocker en mémoire
+tous les résultats intermédiaires grâce à l'accumulateur.
+
+\subsection{Représentation en mémoire}
+\begin{figure}[H]
+	\centering
+	\includesvg[scale = 0.5]{img/ProgEnvMem.svg}
+	\caption{Représentation en mémoire d'un programme.}
+	\label{fig:ProgEnvMem}
+\end{figure}
+Sur la \figuref{ProgEnvMem}, on peut voir que l'\emph{environnement}
+fait une sorte de \emph{mapping} entre les \emph{identificateurs}
+et les \emph{variables} stockées dans la \emph{mémoire}.
+Lorsque \lstinline|X| est déclaré pour la première fois,
+l'environnement le mappe sur la variable $x$ en mémoire,
+initialisée à $10000$ par le code de l'exemple.
+Lorsqu'ensuite, on veut exécuter \lstinline|X = 999|,
+l'identificateur \lstinline|X| est déjà lié à la variable $x$ qui vaut $10000$.
+Une erreur se produit donc, car $999 \ne 10000$.
+Si, à la place, on déclare à nouveau \lstinline|X| avec \lstinline|declare|,
+cette fois-ci, on crée une nouvelle variable en mémoire, $x'$,
+qui sera initialisée à $999$.
+La variable $x$ est devenue inaccessible.
+
+\subsection{Réflexions sur la programmation fonctionnelle}
+La programmation fonctionnelle est à \emph{affectation unique},
+ce qui est une grosse restriction.
+Afin d'écrire des programmes \emph{efficaces},
+il faut utiliser des fonctions récursives terminales,
+car celles-ci ne font pas grandir la \emph{pile} de l'ordinateur.
+La programmation fonctionnelle est aussi efficace
+que la programmation avec variables muables.
+Nous n'avons pas besoin de celles-ci pour faire un programme efficace.
+
+\end{document}
